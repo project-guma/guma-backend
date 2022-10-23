@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/auth/dto/CreateUserDto';
+import { CreateAuthDto } from 'src/auth/dto/CreateAuthDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Oauth } from '../entities/oauth';
 import { Repository } from 'typeorm';
@@ -14,7 +14,7 @@ export class AuthService {
 
         try {
             console.log('Login User email :  ', user.email);
-            const newUser: CreateUserDto = {
+            const newUser: CreateAuthDto = {
                 email: user.email,
                 photo: user.photos,
                 accessToken: user.accessToken,

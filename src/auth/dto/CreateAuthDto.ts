@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, Matches, MaxLength } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateAuthDto {
     @IsEmail()
     @Matches(/^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/)
     @ApiProperty({ description: 'email' })
