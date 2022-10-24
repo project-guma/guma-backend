@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { IsEmail, IsString } from 'class-validator';
+import { Users } from './user';
 
 @Entity('oauth')
 export class Oauth {
@@ -22,4 +23,7 @@ export class Oauth {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @OneToMany(() => Users, users => users.OauthId)
+    Users: Users[];
 }

@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Oauth } from './oauth';
 
 @Entity('users')
 export class Users {
@@ -13,4 +14,11 @@ export class Users {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @ManyToOne(() => Oauth, oauth => oauth.Users, {
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    })
+    @JoinColumn([{ name: 'OauthId', referencedColumnName: 'id' }])
+    OauthId: Oauth;
 }
