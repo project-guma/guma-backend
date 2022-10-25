@@ -24,6 +24,6 @@ export class Oauth {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToMany(() => Users, users => users.OauthId)
+    @OneToMany(() => Users, users => users.Oauth)
     Users: Users[];
 }

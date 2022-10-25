@@ -1,5 +1,7 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Oauth } from './oauth';
+import { SubscribeList } from './subscribeList';
+import { Bucket } from './Bucket';
 
 @Entity('users')
 export class Users {
@@ -15,10 +17,19 @@ export class Users {
     @UpdateDateColumn()
     updatedAt: Date;
 
+    @OneToMany(() => SubscribeList, subscribeList => subscribeList.User)
+    SubscribeList: SubscribeList[];
+
+    @OneToMany(() => Bucket, bucket => bucket.User)
+    Bucket: Bucket[];
+
+    @Column('int', { name: 'OauthId' })
+    OauthId: number;
+
     @ManyToOne(() => Oauth, oauth => oauth.Users, {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
     @JoinColumn([{ name: 'OauthId', referencedColumnName: 'id' }])
-    OauthId: Oauth;
+    Oauth: Oauth;
 }
