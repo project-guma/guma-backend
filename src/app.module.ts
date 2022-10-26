@@ -6,6 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { Oauth } from './entities/oauth';
 import { UserModule } from './user/user.module';
+import { Users } from './entities/user';
+import { Bucket } from './entities/Bucket';
+import { Categories } from './entities/Categories';
+import { Items } from './entities/items';
+import { SubscribeList } from './entities/subscribeList';
+import { SubscribeModule } from './subscribe/subscribe.module';
 
 @Module({
     imports: [
@@ -21,7 +27,7 @@ import { UserModule } from './user/user.module';
                     username: configService.get('DB_USERNAME'),
                     password: configService.get('DB_PASSWORD'),
                     database: configService.get('DB_DATABASE'),
-                    entities: [Oauth],
+                    entities: [Oauth, Users, Bucket, Categories, Items, SubscribeList],
                     autoLoadEntities: true,
                     charset: 'utf8mb4',
                     synchronize: true,
@@ -31,6 +37,7 @@ import { UserModule } from './user/user.module';
             },
         }),
         UserModule,
+        SubscribeModule,
     ],
 
     controllers: [AppController],
