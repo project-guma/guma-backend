@@ -68,4 +68,14 @@ export class SubscribeService {
             throw error;
         }
     }
+
+    async getSubscribeList(user: { id: number }) {
+        try {
+            const { id } = user;
+            return await this.subscribeRepository.find({ UserId: id });
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
 }
