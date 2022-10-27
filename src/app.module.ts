@@ -12,6 +12,7 @@ import { Categories } from './entities/Categories';
 import { Items } from './entities/items';
 import { SubscribeList } from './entities/subscribeList';
 import { SubscribeModule } from './subscribe/subscribe.module';
+import { ItemModule } from './item/item.module';
 
 @Module({
     imports: [
@@ -38,6 +39,7 @@ import { SubscribeModule } from './subscribe/subscribe.module';
         }),
         UserModule,
         SubscribeModule,
+        ItemModule,
     ],
 
     controllers: [AppController],
