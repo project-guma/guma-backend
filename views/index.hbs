@@ -1,0 +1,42 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+
+        function addProject() {
+
+
+            let myHeaders = new Headers();
+            myHeaders.append("X-Naver-Client-Id", "dfdfdf");
+            myHeaders.append("X-Naver-Client-Secret", "dfdfdf");
+
+            let requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            fetch("https://openapi.naver.com/v1/search/shop.json?query=두루마리휴지3겹&sort=asc", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+        }
+
+
+    </script>
+  </head>
+  <body>
+    <a href="{{google}}">google login</a>
+    <a href="{{kakao}}">kakao login</a>
+
+
+    <div></div>
+  <div></div>
+
+  <button onclick='addProject()'>api test</button>
+
+  </body>
+</html>
