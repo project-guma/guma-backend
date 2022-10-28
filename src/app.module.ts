@@ -13,6 +13,7 @@ import { Items } from './entities/items';
 import { SubscribeList } from './entities/subscribeList';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { ItemModule } from './item/item.module';
+import { BucketModule } from './bucket/bucket.module';
 
 @Module({
     imports: [
@@ -40,6 +41,7 @@ import { ItemModule } from './item/item.module';
         UserModule,
         SubscribeModule,
         ItemModule,
+        BucketModule,
     ],
 
     controllers: [AppController],
