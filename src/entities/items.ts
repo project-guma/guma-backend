@@ -11,8 +11,17 @@ export class Items {
     @Column('varchar', { name: 'name' })
     name: string;
 
+    @Column('varchar', { name: 'title' })
+    title: string;
+
+    @Column('varchar', { name: 'image' })
+    image: string;
+
     @Column('varchar', { name: 'link' })
     link: string;
+
+    @Column('int', { name: 'price' })
+    price: number;
 
     @CreateDateColumn()
     createdAt: Date;
