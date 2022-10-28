@@ -4,6 +4,8 @@ import { SubscribeList } from '../entities/subscribeList';
 import { Repository } from 'typeorm';
 import { CreateSubscribeDto } from './dto/CreateSubscribeDto';
 import { UpdateSubscribeDto } from './dto/UpdateSubscribeDto';
+import { Alarm } from '../entities/alarm';
+import { Temporal } from '@js-temporal/polyfill';
 
 export interface IUpdateSubscribe {
     body?: UpdateSubscribeDto;
@@ -13,18 +15,29 @@ export interface IUpdateSubscribe {
 
 @Injectable()
 export class SubscribeService {
-    constructor(@InjectRepository(SubscribeList) private subscribeRepository: Repository<SubscribeList>) {}
+    constructor(
+        @InjectRepository(SubscribeList) private subscribeRepository: Repository<SubscribeList>,
+        @InjectRepository(Alarm) private alarmRepository: Repository<Alarm>,
+    ) {}
 
     async createSubscribe(body: CreateSubscribeDto, user) {
         try {
             const { cycle, ItemId } = body;
             const { id } = user;
 
+            let now = Temporal.Now.plainDateISO();
+            now = now.add({ days: cycle });
+
             const newSubscribe = this.subscribeRepository.create();
             newSubscribe.cycle = cycle;
             newSubscribe.UserId = id;
             newSubscribe.ItemId = ItemId;
-            return await this.subscribeRepository.save(newSubscribe);
+            const returned = await this.subscribeRepository.save(newSubscribe);
+
+            const newAlarm = this.alarmRepository.create();
+            newAlarm.date = now.toString();
+            newAlarm.SubscribeListId = returned.id;
+            return await this.alarmRepository.save(newAlarm);
         } catch (error) {
             console.log(error);
             throw error;
@@ -37,14 +50,21 @@ export class SubscribeService {
             const { SubscribeId } = param;
             const { id } = user;
 
-            const isSubscribe = await this.subscribeRepository.findOne({ ItemId: Number(SubscribeId) });
+            let now = Temporal.Now.plainDateISO();
+            now = now.add({ days: cycle });
+
+            const isSubscribe = await this.subscribeRepository.findOne({ id: Number(SubscribeId) });
 
             if (isSubscribe.UserId !== id) {
                 throw new BadRequestException();
             }
 
             isSubscribe.cycle = cycle;
-            return await this.subscribeRepository.save(isSubscribe);
+            await this.subscribeRepository.save(isSubscribe);
+
+            const isAlarm = await this.alarmRepository.findOne({ SubscribeListId: Number(SubscribeId) });
+            isAlarm.date = now.toString();
+            return await this.alarmRepository.save(isAlarm);
         } catch (error) {
             console.log(error);
             throw error;

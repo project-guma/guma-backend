@@ -12,4 +12,20 @@ export class ItemService {
         const { CategoryId } = param;
         return await this.itemRepository.find({ CategoryId: CategoryId });
     }
+
+    async addItem(body) {
+        const { CategoryId, name, link } = body;
+
+        const newItem = this.itemRepository.create();
+        newItem.name = name;
+        newItem.link = link;
+        newItem.CategoryId = CategoryId;
+        return await this.itemRepository.save(newItem);
+    }
+
+    async deleteItem(param) {
+        const { ItemId } = param;
+
+        return await this.itemRepository.delete({ id: Number(ItemId) });
+    }
 }

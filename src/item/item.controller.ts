@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ItemService } from './item.service';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -12,6 +12,17 @@ export class ItemController {
     @Get(':CategoryId')
     @UseGuards(AuthGuard('jwt'))
     async getItemListByCategory(@Param() param) {
-        await this.itemService.getItemListByCategory(param);
+        return await this.itemService.getItemListByCategory(param);
+    }
+
+    @ApiOperation({ summary: '상품 등록하기.. 이건 어떻게 해야할지 모르겠음. 어드민페이지에서 사용해야하나?' })
+    @Post()
+    async addItem(@Body() body) {
+        return await this.itemService.addItem(body);
+    }
+
+    @Delete(':ItemId')
+    async deleteItem(@Param() param) {
+        return await this.itemService.deleteItem(param);
     }
 }

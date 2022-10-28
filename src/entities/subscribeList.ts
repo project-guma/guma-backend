@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Users } from './user';
 import { Items } from './items';
+import { Alarm } from './alarm';
 
 @Entity('subscribeList')
 export class SubscribeList {
@@ -15,6 +16,9 @@ export class SubscribeList {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @OneToMany(() => Alarm, alarm => alarm.SubscribeList)
+    Alarm: Alarm[];
 
     @Column('int', { name: 'UserId' })
     UserId: number;
