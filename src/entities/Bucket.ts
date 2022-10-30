@@ -8,6 +8,9 @@ export class Bucket {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
     id: number;
 
+    @Column('int', { name: 'cycle' })
+    cycle: number;
+
     @CreateDateColumn()
     createdAt: Date;
 
