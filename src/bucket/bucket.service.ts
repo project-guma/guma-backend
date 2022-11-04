@@ -33,18 +33,19 @@ export class BucketService {
             .getRawMany();
     }
 
-    async deleteBucket(body, user) {
-        const { BucketId } = body;
+    async deleteBucket(param, user) {
+        const { BucketId } = param;
         const { id } = user;
 
-        return await this.bucketRepository.delete({ id: BucketId, UserId: id });
+        return await this.bucketRepository.delete({ id: Number(BucketId), UserId: id });
     }
 
-    async updateBucket(body, user) {
-        const { cycle, BucketId } = body;
+    async updateBucket(body, param, user) {
+        const { cycle } = body;
+        const { BucketId } = param;
         const { id } = user;
 
-        const isSubscribe = await this.bucketRepository.findOne({ id: BucketId, UserId: id });
+        const isSubscribe = await this.bucketRepository.findOne({ id: Number(BucketId), UserId: id });
 
         if (isSubscribe.UserId !== id) {
             throw new BadRequestException();

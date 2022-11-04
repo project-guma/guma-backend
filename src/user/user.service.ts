@@ -9,10 +9,13 @@ export class UserService {
     constructor(@InjectRepository(Users) private userRepository: Repository<Users>) {}
 
     async createUser(body: CreateUserDto, user) {
+        const { nickname, image } = body;
+        const { id } = user;
         const newUser = this.userRepository.create();
 
-        newUser.nickname = body.nickname;
-        newUser.OauthId = user.id;
+        newUser.nickname = nickname;
+        newUser.image = image;
+        newUser.OauthId = id;
         return await this.userRepository.save(newUser);
     }
 }

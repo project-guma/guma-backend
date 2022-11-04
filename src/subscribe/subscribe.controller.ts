@@ -42,4 +42,8 @@ export class SubscribeController {
     async getSubscribeList(@User() user) {
         return await this.subscribeService.getSubscribeList(user);
     }
+
+    @Get('onboard')
+    @UseGuards(AuthGuard('jwt'))
+    async getOnboardItem() {}
 }

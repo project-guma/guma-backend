@@ -3,10 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SubscribeList } from '../entities/subscribeList';
 import { Items } from '../entities/items';
 import { Repository } from 'typeorm';
+import { Categories } from '../entities/Categories';
 
 @Injectable()
 export class ItemService {
-    constructor(@InjectRepository(Items) private itemRepository: Repository<Items>) {}
+    constructor(
+        @InjectRepository(Items) private itemRepository: Repository<Items>,
+        @InjectRepository(Categories) private categoryRepository: Repository<Categories>,
+    ) {}
 
     async getItemListByCategory(param) {
         const { CategoryId } = param;
@@ -27,5 +31,9 @@ export class ItemService {
         const { ItemId } = param;
 
         return await this.itemRepository.delete({ id: Number(ItemId) });
+    }
+
+    async getCategoryList() {
+        return await this.categoryRepository.find();
     }
 }

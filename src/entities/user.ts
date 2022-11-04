@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
 import { Oauth } from './oauth';
 import { SubscribeList } from './subscribeList';
 import { Bucket } from './Bucket';
@@ -11,8 +20,12 @@ export class Users {
     @Column('varchar', { name: 'nickname' })
     nickname: string;
 
+    @Column('varchar', { name: 'image' })
+    image: string;
+
     @CreateDateColumn()
     createdAt: Date;
+    d;
 
     @UpdateDateColumn()
     updatedAt: Date;

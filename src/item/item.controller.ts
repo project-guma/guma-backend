@@ -25,4 +25,9 @@ export class ItemController {
     async deleteItem(@Param() param) {
         return await this.itemService.deleteItem(param);
     }
+
+    @Get('category/list')
+    async getCategoryList() {
+        return await this.itemService.getCategoryList();
+    }
 }
