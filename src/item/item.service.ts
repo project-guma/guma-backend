@@ -1,39 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { SubscribeList } from '../entities/subscribeList';
-import { Items } from '../entities/items';
-import { Repository } from 'typeorm';
-import { Categories } from '../entities/Categories';
+
+import { ItemRepository } from './item.repository';
 
 @Injectable()
 export class ItemService {
-    constructor(
-        @InjectRepository(Items) private itemRepository: Repository<Items>,
-        @InjectRepository(Categories) private categoryRepository: Repository<Categories>,
-    ) {}
+    constructor(private itemRepository: ItemRepository) {}
 
     async getItemListByCategory(param) {
-        const { CategoryId } = param;
-        return await this.itemRepository.find({ CategoryId: CategoryId });
+        const categoryId = Number(param.CategoryId);
+        return await this.itemRepository.findItemListByCategoryId(categoryId);
     }
 
     async addItem(body) {
         const { CategoryId, name, link } = body;
-
-        const newItem = this.itemRepository.create();
-        newItem.name = name;
-        newItem.link = link;
-        newItem.CategoryId = CategoryId;
-        return await this.itemRepository.save(newItem);
+        return await this.itemRepository.createItem({ CategoryId, name, link });
     }
 
     async deleteItem(param) {
-        const { ItemId } = param;
+        const itemId = Number(param.ItemId);
 
-        return await this.itemRepository.delete({ id: Number(ItemId) });
+        return await this.itemRepository.deleteItem(itemId);
     }
 
     async getCategoryList() {
-        return await this.categoryRepository.find();
+        return await this.itemRepository.findCategoryList();
     }
 }
