@@ -1,11 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { SubscribeList } from '../entities/subscribeList';
-import { Repository } from 'typeorm';
+
 import { CreateSubscribeDto } from './dto/CreateSubscribeDto';
 import { UpdateSubscribeDto } from './dto/UpdateSubscribeDto';
-import { Alarm } from '../entities/alarm';
+
 import { Temporal } from '@js-temporal/polyfill';
+import { SubscribeRepository } from './subscribe.repository';
 
 export interface IUpdateSubscribe {
     body?: UpdateSubscribeDto;
@@ -15,29 +14,22 @@ export interface IUpdateSubscribe {
 
 @Injectable()
 export class SubscribeService {
-    constructor(
-        @InjectRepository(SubscribeList) private subscribeRepository: Repository<SubscribeList>,
-        @InjectRepository(Alarm) private alarmRepository: Repository<Alarm>,
-    ) {}
+    constructor(private subscribeRepository: SubscribeRepository) {}
 
     async createSubscribe(body: CreateSubscribeDto, user) {
         try {
             const { cycle, ItemId } = body;
-            const { id } = user;
+            const oauthId = user.id;
 
+            // 이것도 나중에 DI로 수정해야함
             let now = Temporal.Now.plainDateISO();
             now = now.add({ days: cycle });
 
-            const newSubscribe = this.subscribeRepository.create();
-            newSubscribe.cycle = cycle;
-            newSubscribe.UserId = id;
-            newSubscribe.ItemId = ItemId;
-            const returned = await this.subscribeRepository.save(newSubscribe);
+            const newSubscribe = await this.subscribeRepository.createSubscribe({ oauthId, ItemId, cycle });
 
-            const newAlarm = this.alarmRepository.create();
-            newAlarm.date = now.toString();
-            newAlarm.SubscribeListId = returned.id;
-            return await this.alarmRepository.save(newAlarm);
+            const subscribeId = newSubscribe.id;
+
+            return await this.subscribeRepository.createAlarm({ subscribeId, now });
         } catch (error) {
             console.log(error);
             throw error;
@@ -47,24 +39,18 @@ export class SubscribeService {
     async updateSubscribe({ body, param, user }: IUpdateSubscribe) {
         try {
             const { cycle } = body;
-            const { SubscribeId } = param;
-            const { id } = user;
+            const subscribeId = Number(param.SubscribeId);
+            const oauthId = user.id;
 
             let now = Temporal.Now.plainDateISO();
             now = now.add({ days: cycle });
 
-            const isSubscribe = await this.subscribeRepository.findOne({ id: Number(SubscribeId) });
-
-            if (isSubscribe.UserId !== id) {
-                throw new BadRequestException();
-            }
-
-            isSubscribe.cycle = cycle;
-            await this.subscribeRepository.save(isSubscribe);
-
-            const isAlarm = await this.alarmRepository.findOne({ SubscribeListId: Number(SubscribeId) });
-            isAlarm.date = now.toString();
-            return await this.alarmRepository.save(isAlarm);
+            return await this.subscribeRepository.updateSubscribeAndAlarmBySubscribeId({
+                subscribeId,
+                oauthId,
+                cycle,
+                now,
+            });
         } catch (error) {
             console.log(error);
             throw error;
@@ -73,16 +59,16 @@ export class SubscribeService {
 
     async deleteSubscribe({ param, user }: IUpdateSubscribe) {
         try {
-            const { SubscribeId } = param;
-            const { id } = user;
+            const subscribeId = Number(param.SubscribeId);
+            const oauthId = user.id;
 
-            const isSubscribe = await this.subscribeRepository.findOne({ ItemId: Number(SubscribeId) });
+            const isSubscribe = await this.subscribeRepository.findSubscribe(subscribeId);
 
-            if (isSubscribe.UserId !== id) {
+            if (isSubscribe.UserId !== oauthId) {
                 throw new BadRequestException();
             }
 
-            return await this.subscribeRepository.delete({ ItemId: Number(SubscribeId) });
+            return await this.subscribeRepository.deleteSubscribe(subscribeId);
         } catch (error) {
             console.log(error);
             throw error;
@@ -91,8 +77,8 @@ export class SubscribeService {
 
     async getSubscribeList(user: { id: number }) {
         try {
-            const { id } = user;
-            return await this.subscribeRepository.find({ UserId: id });
+            const oauthId = user.id;
+            return await this.subscribeRepository.findSubscribeList(oauthId);
         } catch (error) {
             console.log(error);
             throw error;
